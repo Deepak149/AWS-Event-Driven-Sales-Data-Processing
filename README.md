@@ -3,19 +3,19 @@
 ## Requirement
 Sales data often arrives in JSON format, containing both order information and contact information. However, inconsistencies and incomplete records can lead to data integrity issues, complicating downstream processing and analysis.
 
-The current challenge is to design a robust, scalable, and automated system to handle incoming sales data files, validate each record, and appropriately store the data based on its validity. Specifically, the system should:
+The challenge is to design a robust, scalable, and automated system to handle incoming sales data files, validate each record, and appropriately store the data based on its validity. Specifically, the system should:
 
 - Automatically detect and process new sales data files uploaded to an S3 bucket.
-- Validate each record to ensure the presence of both order information and contact information.
+- Validate each record to ensure both the order information and contact information are present.
 - Insert complete records into a DynamoDB table for reliable storage and further processing.
-- Redirect incomplete records to a Dead Letter Queue (DLQ) in SQS for further inspection and correction.
+- Redirect incomplete records to a different place so that further inspection can be done.
 
 The solution must be highly scalable to handle varying volumes of data, ensure data integrity, and streamline the sales data management process.
 
 ## Example records.
 
 Here the first record has both order information and contact information but the second record has only order information.
-'''
+```
 {
     "orders": [
         {
@@ -40,7 +40,7 @@ Here the first record has both order information and contact information but the
         }
     ]
 }
-'''
+```
 
 ## Architecture
 ![architecture pic](project_architecture.png)
