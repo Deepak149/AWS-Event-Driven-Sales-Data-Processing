@@ -1,13 +1,19 @@
 # Event-Driven Sales Data Processing.
-> Sales data often arrives in JSON format, containing both order information and contact information. However, inconsistencies and incomplete records can lead to data integrity issues, complicating downstream processing and analysis.
 
-The current challenge is to design a robust, scalable, and automated system to handle incoming sales data files, validate the completeness of each record, and appropriately store or flag the data based on its integrity. Specifically, the system should:
+## Requirement
+Sales data often arrives in JSON format, containing both order information and contact information. However, inconsistencies and incomplete records can lead to data integrity issues, complicating downstream processing and analysis.
+
+The current challenge is to design a robust, scalable, and automated system to handle incoming sales data files, validate each record, and appropriately store the data based on its validity. Specifically, the system should:
 
 Automatically detect and process new sales data files uploaded to an S3 bucket.
 Validate each record to ensure the presence of both order information and contact information.
 Insert complete records into a DynamoDB table for reliable storage and further processing.
 Redirect incomplete records to a Dead Letter Queue (DLQ) in SQS for further inspection and correction.
 The solution must be highly scalable to handle varying volumes of data, ensure data integrity, and streamline the sales data management process.
+
+## Architecture
+![Alt text](project_architecture.png)
+
 > Live demo [_here_](https://www.example.com). <!-- If you have the project hosted somewhere, include the link here. -->
 
 ## Table of Contents
