@@ -11,8 +11,44 @@ Insert complete records into a DynamoDB table for reliable storage and further p
 Redirect incomplete records to a Dead Letter Queue (DLQ) in SQS for further inspection and correction.
 The solution must be highly scalable to handle varying volumes of data, ensure data integrity, and streamline the sales data management process.
 
+## Example records.
+
+Here the first record has both order information and contact information but the second record has only order information.
+>{
+>    "orders": [
+>        {
+>            "contact-info": {
+>                "name": "Foo Bar",
+>                "email": "foobar@test.com"
+>            },
+>            "order-info": {
+>                "OrderId": "1",
+                "item-id": "101",
+                "item-desc": "Item One",
+                "qty": "1"
+            }
+        },
+        {
+            "order-info": {
+                "orderId": "2",
+                "item-id": "102",
+                "item-desc": "Item Two",
+                "qty": "2"
+            }
+        }
+    ]
+}
+
 ## Architecture
-![Alt text](project_architecture.png)
+![architecture pic](project_architecture.png)
+
+When a new sales data file is uploaded to the S3 bucket, an EventBridge rule triggers an AWS Step Functions workflow to process the file. Each record in the file is assessed using an AWS Lambda function to determine if it contains both order information and contact information.
+
+If both order and contact information are present, the lambda function returns the record and is inserted into a DynamoDB table
+by the workflow which can be used for further processing and storage.
+If the contact information is missing, the lambda function raises an exception and the workflow places the record in a Dead Letter Queue (DLQ) in SQS for further inspection and correction.
+
+The 
 
 > Live demo [_here_](https://www.example.com). <!-- If you have the project hosted somewhere, include the link here. -->
 
