@@ -1,28 +1,30 @@
-# Event-Driven Sales Data Processing.
+# Event-Driven Sales Data Processing
 
 ## Requirement
 Sales data often arrives in JSON format, containing both order information and contact information. However, inconsistencies and incomplete records can lead to data integrity issues, complicating downstream processing and analysis.
 
 The current challenge is to design a robust, scalable, and automated system to handle incoming sales data files, validate each record, and appropriately store the data based on its validity. Specifically, the system should:
 
-Automatically detect and process new sales data files uploaded to an S3 bucket.
-Validate each record to ensure the presence of both order information and contact information.
-Insert complete records into a DynamoDB table for reliable storage and further processing.
-Redirect incomplete records to a Dead Letter Queue (DLQ) in SQS for further inspection and correction.
+- Automatically detect and process new sales data files uploaded to an S3 bucket.
+- Validate each record to ensure the presence of both order information and contact information.
+- Insert complete records into a DynamoDB table for reliable storage and further processing.
+- Redirect incomplete records to a Dead Letter Queue (DLQ) in SQS for further inspection and correction.
+
 The solution must be highly scalable to handle varying volumes of data, ensure data integrity, and streamline the sales data management process.
 
 ## Example records.
 
 Here the first record has both order information and contact information but the second record has only order information.
->{
->    "orders": [
->        {
->            "contact-info": {
->                "name": "Foo Bar",
->                "email": "foobar@test.com"
->            },
->            "order-info": {
->                "OrderId": "1",
+'''
+{
+    "orders": [
+        {
+            "contact-info": {
+                "name": "Foo Bar",
+                "email": "foobar@test.com"
+            },
+            "order-info": {
+                "OrderId": "1",
                 "item-id": "101",
                 "item-desc": "Item One",
                 "qty": "1"
@@ -38,6 +40,7 @@ Here the first record has both order information and contact information but the
         }
     ]
 }
+'''
 
 ## Architecture
 ![architecture pic](project_architecture.png)
@@ -48,22 +51,22 @@ If both order and contact information are present, the lambda function returns t
 by the workflow which can be used for further processing and storage.
 If the contact information is missing, the lambda function raises an exception and the workflow places the record in a Dead Letter Queue (DLQ) in SQS for further inspection and correction.
 
-The 
+### The step function workflow
+![state machine](step-function.png)
 
-> Live demo [_here_](https://www.example.com). <!-- If you have the project hosted somewhere, include the link here. -->
+Since, a single json file contains multiple records, multiple invokations of lambda function is required. To facilitate simultaneous running of the same lambda function, the lambda invoke is placed inside MAP state. all the tasks inside the map state will run simultaneously for each record in the JSON file. 
 
-## Table of Contents
-* [General Info](#general-information)
-* [Technologies Used](#technologies-used)
-* [Features](#features)
-* [Screenshots](#screenshots)
-* [Setup](#setup)
-* [Usage](#usage)
-* [Project Status](#project-status)
-* [Room for Improvement](#room-for-improvement)
-* [Acknowledgements](#acknowledgements)
-* [Contact](#contact)
-<!-- * [License](#license) -->
+## Key Features
+
+- Event-driven architecture: Utilizes AWS EventBridge to automatically trigger workflows upon file upload.
+- Serverless processing: Leverages AWS Lambda for on-demand data validation and processing.
+- State management: Uses AWS Step Functions to orchestrate the workflow and handle the logic for each record.
+- Data integrity: Ensures only complete records are inserted into DynamoDB, while incomplete records are directed to an SQS DLQ.
+- Scalability: Fully scalable to handle varying loads of sales data without manual intervention.
+
+This setup provides a robust and efficient mechanism to manage sales data, ensuring high data quality and reliability.
+
+
 
 
 ## General Information
