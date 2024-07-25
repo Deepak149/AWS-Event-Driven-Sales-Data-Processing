@@ -45,7 +45,7 @@ Here the first record has both order information and contact information but the
 ## Solution Architecture
 ![architecture pic](project_architecture.png)
 
-When a new sales data file is uploaded to the S3 bucket, an EventBridge rule triggers an AWS Step Functions workflow to process the file. Each record in the file is assessed using an AWS Lambda function to determine if it contains both order information and contact information.
+When a new sales data file is uploaded to the S3 bucket, an EventBridge rule triggers an AWS Step Functions workflow to process the file. Each record in the file is assessed in the step functions workflow using an AWS Lambda function to determine if it contains both order information and contact information.
 
 If both order and contact information are present, the lambda function returns the record and is inserted into a DynamoDB table
 by the workflow which can be used for further processing and storage.
